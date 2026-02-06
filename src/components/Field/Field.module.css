@@ -1,0 +1,19 @@
+.fieldWrapper {
+	height: fit-content;
+	padding: 5px;
+}
+
+.inputEl {
+	align-self: center;
+	width: 80%;
+	border: none;
+	padding: 15px 20px;
+	border-radius: 5px;
+	font-size: 16px;
+}
+
+.error {
+	color: red;
+	font-weight: 600;
+	font-size: 0.8rem;
+}

@@ -1,0 +1,43 @@
+.regFormWrapper {
+	width: 400px;
+	height: fit-content;
+	background-color: grey;
+	padding: 5px;
+	border-radius: 10px;
+
+	box-shadow:
+		0 0 20px rgba(0, 255, 255, 0.1),
+		0 0 40px rgba(0, 255, 255, 0.2),
+		0 0 80px rgba(0, 255, 255, 0.15),
+		0 4px 6px rgba(0, 0, 0, 0.3);
+
+	transition: box-shadow 0.4s ease;
+	border: 1px solid rgba(0, 255, 255, 0.1);
+}
+
+.regFormWrapper:hover {
+	box-shadow:
+		0 0 30px rgba(0, 255, 255, 0.2),
+		0 0 60px rgba(0, 255, 255, 0.35),
+		0 0 100px rgba(0, 255, 255, 0.25),
+		0 6px 10px rgba(0, 0, 0, 0.35);
+	transform: translateY(-2px);
+}
+
+.regForm {
+	width: 100%;
+	height: fit-content;
+	padding: 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.regFormTitle {
+	color: #fff;
+	margin: 10px;
+}
+
+.submitBtn {
+	align-self: center;
+}
