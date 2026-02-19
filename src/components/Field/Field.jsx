@@ -1,13 +1,14 @@
 import styles from './Field.module.css';
 
-export const Field = ({ newError, ...props }) => {
-	const errorElements = Array.isArray(newError)
-		? newError.map((er, i) => (
-				<div key={i} className={styles.error}>
-					{er}
-				</div>
-			))
-		: null;
+export const Field = ({ newErrors, ...props }) => {
+	const errorElements =
+		newErrors && newErrors !== null
+			? newErrors.map((err, i) => (
+					<div key={i} className={styles.error}>
+						{err}
+					</div>
+				))
+			: null;
 
 	return (
 		<div className={styles.fieldWrapper}>

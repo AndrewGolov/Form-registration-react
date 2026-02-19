@@ -1,12 +1,12 @@
 import './App.css';
 import { Form } from './components/Form/Form';
-import { FormPack } from './components/FormPack/FormPack';
+import { RegForm } from './components/RegForm/RegForm';
 
 export function App() {
 	return (
 		<div>
 			<Form title="Регистрация" submitText="Зарегистрироваться" />
-			<FormPack title="Форма регистрация" submitText="Зарегистрироваться повторно" />
+			<RegForm title="Форма регистрация" submitText="Зарегистрироваться" />
 		</div>
 	);
 }

@@ -1,7 +1,8 @@
 .regFormWrapper {
+	margin-top: 30px;
 	width: 400px;
 	height: fit-content;
-	background-color: grey;
+	background-color: lightblue;
 	padding: 5px;
 	border-radius: 10px;
 

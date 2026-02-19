@@ -1,9 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import styles from './Form.module.css';
 import { Field } from '../Field/Field.jsx';
 import { Btn } from '../Btn/Btn.jsx';
-import { emailValidation } from '../../Utils/email-validation.js';
-import { passwordValidation } from '../../Utils/password-validation.js';
+import { emailValidation } from '../../Validators/email-validation.js';
+import { passwordValidation } from '../../Validators/password-validation.js';
 
 const sendData = (data) => {
 	if (!data) {
@@ -20,62 +20,39 @@ export function Form(props) {
 		password: { value: '', isEdit: false, errors: [] },
 		repeatPassword: { value: '', isEdit: false, errors: [] },
 	});
-
 	const submitBtnRegFormRef = useRef(null);
 
-	const onChangeEmail = ({ target }) =>
-		setDataForm((prev) => ({ ...prev, email: { ...prev.email, value: target.value, isEdit: true, errors: [] } }));
-
-	const onChangePassword = ({ target }) =>
-		setDataForm((prev) => ({
-			...prev,
-			password: { ...prev.password, value: target.value, isEdit: true, errors: [] },
-		}));
-
-	const onChangeRepeatPassword = ({ target }) =>
-		setDataForm((prev) => ({
-			...prev,
-			repeatPassword: { ...prev.repeatPassword, value: target.value, isEdit: true, errors: [] },
-		}));
-
-	const onBlurEmail = () => {
-		const newErrMailArr = [];
-		const validEmail = emailValidation(dataForm.email.value);
-
-		if (dataForm.email.isEdit) {
-			if (validEmail !== null) {
-				newErrMailArr.push(validEmail);
-			}
-			setDataForm((prev) => ({ ...prev, email: { ...prev.email, errors: newErrMailArr } }));
-		} else setDataForm((prev) => ({ ...prev, email: { ...prev.email, errors: [] } }));
-	};
-	const onBlurPassword = () => {
-		const newErrPasswordArr = [];
-		const validPassword = passwordValidation(dataForm.password.value);
-
-		if (dataForm.password.isEdit) {
-			if (validPassword !== null) {
-				newErrPasswordArr.push(validPassword);
-			}
-			setDataForm((prev) => ({ ...prev, password: { ...prev.password, errors: newErrPasswordArr } }));
-		} else setDataForm((prev) => ({ ...prev, password: { ...prev.password, errors: [] } }));
-	};
-	const onBlurRepeatPassword = () => {
-		const newErrRepeatPasswordArr = [];
-
-		if (dataForm.repeatPassword.isEdit) {
-			if (dataForm.repeatPassword.value !== dataForm.password.value) {
-				newErrRepeatPasswordArr.push('Пароли не совпадают ');
-			}
+	const onChangeField =
+		(fieldName) =>
+		({ target }) =>
 			setDataForm((prev) => ({
 				...prev,
-				repeatPassword: { ...prev.repeatPassword, errors: newErrRepeatPasswordArr },
+				[fieldName]: { ...prev[fieldName], value: target.value, isEdit: true, errors: [] },
 			}));
-		} else {
-			setDataForm((prev) => ({ ...prev, repeatPassword: { ...prev.repeatPassword, errors: [] } }));
-			submitBtnRegFormRef.current.focus();
+	const onBlurField = (fieldName) => () => {
+		if (!dataForm[fieldName].isEdit) return;
+		if (fieldName === 'email') {
+			const validEmail = emailValidation(dataForm.email.value);
+			validEmail !== null
+				? setDataForm((prev) => ({ ...prev, email: { ...prev.email, errors: [...validEmail] } }))
+				: setDataForm((prev) => ({ ...prev, email: { ...prev.email, errors: [] } }));
 		}
-		submitBtnRegFormRef.current.focus();
+		if (fieldName === 'password') {
+			const validPassword = passwordValidation(dataForm.password.value);
+
+			validPassword !== null
+				? setDataForm((prev) => ({ ...prev, password: { ...prev.password, errors: [...validPassword] } }))
+				: setDataForm((prev) => ({ ...prev, password: { ...prev.password, errors: [] } }));
+		}
+		if (fieldName === 'repeatPassword') {
+			const validPassword = passwordValidation(dataForm.repeatPassword.value);
+			validPassword !== null || dataForm.repeatPassword.value !== dataForm.password.value
+				? setDataForm((prev) => ({
+						...prev,
+						repeatPassword: { ...prev.repeatPassword, errors: ['Пароли не совпадают '] },
+					}))
+				: setDataForm((prev) => ({ ...prev, repeatPassword: { ...prev.repeatPassword, errors: [] } }));
+		}
 	};
 
 	const onSubmitRegForm = (event) => {
@@ -94,10 +71,13 @@ export function Form(props) {
 		dataForm.repeatPassword.value &&
 		dataForm.email.errors.length === 0 &&
 		dataForm.password.errors.length === 0 &&
+		dataForm.repeatPassword.value === dataForm.password.value &&
 		dataForm.repeatPassword.errors.length === 0;
-
-	const isError = (data, nameField) =>
-		data[nameField].isEdit && data[nameField].errors.length > 0 ? data[nameField].errors : null;
+	useEffect(() => {
+		if (isValidForm) {
+			submitBtnRegFormRef.current.focus();
+		}
+	}, [isValidForm]);
 
 	return (
 		<div className={styles.regFormWrapper}>
@@ -108,28 +88,28 @@ export function Form(props) {
 					type="email"
 					name="email"
 					placeholder="Введите email"
-					onChange={onChangeEmail}
-					onBlur={onBlurEmail}
+					onChange={onChangeField('email')}
+					onBlur={onBlurField('email')}
 					value={dataForm.email.value}
-					newError={isError(dataForm, 'email')}
+					newErrors={dataForm.email.errors}
 				/>
 				<Field
 					type="password"
 					name="password"
 					placeholder="Введите пароль"
-					onChange={onChangePassword}
-					onBlur={onBlurPassword}
+					onChange={onChangeField('password')}
+					onBlur={onBlurField('password')}
 					value={dataForm.password.value}
-					newError={isError(dataForm, 'password')}
+					newErrors={dataForm.password.errors}
 				/>
 				<Field
 					type="password"
 					name="repeatPassword"
 					placeholder="Повторите пароль"
-					onChange={onChangeRepeatPassword}
-					onBlur={onBlurRepeatPassword}
+					onChange={onChangeField('repeatPassword')}
+					onBlur={onBlurField('repeatPassword')}
 					value={dataForm.repeatPassword.value}
-					newError={isError(dataForm, 'repeatPassword')}
+					newErrors={dataForm.repeatPassword.errors}
 				/>
 
 				<Btn
